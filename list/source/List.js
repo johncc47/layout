@@ -572,6 +572,28 @@ enyo.kind({
 			}
 		}
 	},
+  //* Scrolls if inRow is not currently displayed.  
+  //* If scrolling is necessary, attempts to show inRow in the middle of the display
+  scrollToView: function(inRow) {
+    var newRowTop = inRow * this.rowSize;
+    var offset = newRowTop - (this.lastPos ? this.lastPos : this.scrollTop);
+    var halfScroller = this.scrollerSize/2 - this.rowSize;
+    if (offset > this.scrollerSize - this.rowSize || offset < 0) {
+      // need to scroll the display
+      var newScrollTop;
+      if (offset < 0) {
+        if (newRowTop < halfScroller) {
+          // first half of a display
+          newScrollTop = 0;
+        }
+      } else if (newRowTop > this.portSize - halfScroller) {
+        //last half of a display
+        newScrollTop = this.portSize - this.scrollerSize + this.rowSize;
+      }
+      newScrollTop = newRowTop - halfScroller;
+      this.scrollToRow(Math.floor(newScrollTop/this.rowSize));
+    }
+  },
 	//* Scrolls to the beginning of the list.
 	scrollToStart: function() {
 		this[this.bottomUp ? (this.orientV ? "scrollToBottom" : "scrollToRight") : "scrollToTop"]();
